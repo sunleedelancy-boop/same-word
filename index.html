@@ -1,124 +1,383 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff8f5">
 <title>同词相遇 · Same Word</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
-
-:root {
-  --pink:#d99db4;
-  --deep:#9e6681;
-  --cream:#fffaf5;
-  --ink:#554b50;
-  --muted:#a89ba0;
-}
+:root{--pink:#d99db4;--deep:#98627c;--cream:#fffaf6;--ink:#51464c;--muted:#a99ba1;--line:#f0dfe5;--green:#7d9d85}
 *{box-sizing:border-box}
-body{
-  margin:0; min-height:100vh;
-  font-family:'Nunito','Noto Sans SC',sans-serif;
-  color:var(--ink);
-  background:
-    radial-gradient(ellipse at 10% 10%,#f8e6ec 0,transparent 35%),
-    radial-gradient(ellipse at 90% 90%,#f7eadc 0,transparent 35%),
-    var(--cream);
-  display:flex;align-items:center;justify-content:center;
-  padding:24px;
-}
-.container{width:100%;max-width:510px;text-align:center}
-.top{font-size:12px;letter-spacing:4px;color:var(--deep);font-weight:800}
-.logo{font-size:clamp(42px,10vw,60px);font-weight:800;letter-spacing:3px;margin:15px 0 2px;color:#a86f88}
-.en{font-size:13px;letter-spacing:5px;color:var(--muted)}
-.illustration{font-size:65px;margin:35px 0 18px;letter-spacing:12px}
-h2{font-size:21px;font-weight:600;margin:0 0 10px}
-.subtitle{font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:30px}
-.card{
-  background:#ffffffc9;border:1px solid #f0dfe5;
-  border-radius:23px;padding:25px;
-  box-shadow:0 12px 35px #b98a9814;
-}
-.btn{
-  width:100%;border:0;border-radius:14px;padding:15px;
-  font:700 15px inherit;cursor:pointer;transition:.2s;
-  margin:7px 0;
-}
+body{margin:0;min-height:100vh;padding:22px 16px 36px;color:var(--ink);font-family:Nunito,"Noto Sans SC",sans-serif;background:radial-gradient(ellipse at 8% 8%,#f9e8ee 0,transparent 34%),radial-gradient(ellipse at 95% 90%,#f7eadf 0,transparent 34%),var(--cream)}
+button,input{font:inherit}
+button{cursor:pointer}
+.wrap{width:100%;max-width:620px;margin:0 auto}
+.brand{text-align:center;padding:18px 0 22px}
+.kicker{font-size:11px;letter-spacing:3px;color:var(--deep);font-weight:800}
+.logo{font-size:clamp(42px,10vw,58px);font-weight:800;letter-spacing:4px;color:#a86f88;margin:8px 0 0}
+.english{font-size:11px;letter-spacing:4px;color:var(--muted)}
+.tagline{color:#8f7e86;font-size:14px;line-height:1.8;margin:13px 0 0}
+.card{background:#ffffffdf;border:1px solid var(--line);border-radius:23px;padding:24px;box-shadow:0 12px 35px #b98a9814;margin:14px 0}
+h2{font-size:21px;margin:0 0 8px;font-weight:700}
+h3{font-size:15px;margin:0 0 10px}
+.sub{font-size:13px;line-height:1.8;color:var(--muted);margin:0 0 18px}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px 16px;margin:9px 0;font-weight:800;font-size:14px;transition:.18s}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 .primary{background:var(--pink);color:white;box-shadow:0 5px 14px #d99db444}
-.primary:hover{background:var(--deep);transform:translateY(-2px)}
+.primary:hover:not(:disabled){background:var(--deep);transform:translateY(-1px)}
 .secondary{background:#f8edf1;color:var(--deep)}
-input{
-  width:100%;padding:14px;border:1px solid #ead9e0;
-  border-radius:12px;background:#fffdfa;
-  font:14px inherit;color:var(--ink);outline:none;
-  margin:8px 0;
-}
-input:focus{border-color:var(--pink)}
+.ghost{background:transparent;color:var(--deep);border:1px solid var(--line)}
+input{width:100%;padding:14px;border:1px solid #ead9e0;border-radius:12px;background:#fffdfa;color:var(--ink);outline:none;margin:7px 0;font-size:14px}
+input:focus{border-color:var(--pink);box-shadow:0 0 0 3px #d99db41c}
 .hidden{display:none!important}
-.note{font-size:12px;color:var(--muted);line-height:1.8;margin-top:20px}
-.footer{font-size:11px;color:#b8a9af;margin-top:28px;letter-spacing:1px}
-#message{font-size:13px;color:var(--deep);margin:12px 0;min-height:20px}
-.back{background:none;border:0;color:var(--deep);cursor:pointer;margin-top:12px}
-.decoration{color:#d7a8ba;font-size:14px;margin:20px}
+.center{text-align:center}
+.small{font-size:12px;color:var(--muted);line-height:1.7}
+.notice{padding:12px 14px;border-radius:12px;background:#fbf2f5;color:var(--deep);font-size:13px;line-height:1.7;margin:12px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:30px;padding:6px 11px;background:#f8edf1;color:var(--deep);font-size:12px;font-weight:800}
+.roomcode{font-size:30px;font-weight:800;letter-spacing:7px;color:var(--deep);margin:8px 0}
+.players{display:grid;gap:8px;margin:14px 0}
+.player{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:#fffdfa}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f8e8ee;color:var(--deep);font-weight:800}
+.player-name{font-weight:700;font-size:14px;flex:1}
+.player-status{font-size:11px;color:var(--muted)}
+.timer{font-size:54px;font-weight:800;letter-spacing:2px;color:var(--deep);margin:4px 0}
+.timerbar{height:7px;background:#f4e8ed;border-radius:20px;overflow:hidden;margin:8px 0 18px}
+.timerfill{height:100%;background:var(--pink);width:100%;transition:width .4s linear}
+.wordinput{font-size:18px;text-align:center;padding:17px}
+.wordlist{display:grid;gap:9px;margin:16px 0}
+.worditem{padding:14px;border-radius:14px;background:#fff8fa;border:1px solid var(--line);text-align:left}
+.worditem strong{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
+.worditem span{font-size:19px;font-weight:800;color:var(--deep);word-break:break-word}
+.win{font-size:46px;margin:12px}
+.footer{text-align:center;color:#b8a9af;font-size:10px;letter-spacing:2px;margin-top:24px}
+.toast{min-height:20px;color:var(--deep);font-size:13px;text-align:center;margin:8px 0}
+a{color:var(--deep)}
+@media(max-width:430px){.card{padding:20px}.timer{font-size:46px}}
 </style>
 </head>
 <body>
-<main class="container">
-  <div class="top">✦ A LITTLE GAME FOR FRIENDS ✦</div>
-  <div class="logo">同词相遇</div>
-  <div class="en">SAME WORD, SAME MOMENT.</div>
-  <div class="illustration">☁️ 💭 ☁️</div>
-  <h2>让我们在词语的尽头相遇。</h2>
-  <p class="subtitle">
-    从两个不同的词语出发，<br>
-    沿着彼此的思绪，一步一步走向同一个答案。
-  </p>
+<div class="wrap">
+  <header class="brand">
+    <div class="kicker">✦ A LITTLE GAME FOR FRIENDS ✦</div>
+    <div class="logo">同词相遇</div>
+    <div class="english">SAME WORD, SAME MOMENT.</div>
+    <p class="tagline">从不同的词语出发，沿着彼此的思绪，<br>在某一个答案里相遇。</p>
+  </header>
 
-  <section class="card" id="home">
-    <button class="btn primary" onclick="show('create')">✦ 创建一个房间</button>
-    <button class="btn secondary" onclick="show('join')">♡ 加入朋友的房间</button>
-    <div class="note">2–4 位玩家 · 每轮 30 秒 · 无需注册</div>
+  <section id="home" class="card center">
+    <div style="font-size:54px;margin:4px 0 15px">☁️ 💭 ☁️</div>
+    <h2>让我们在词语的尽头相遇。</h2>
+    <p class="sub">2–4 位朋友 · 每轮 30 秒 · 无需注册</p>
+    <button class="btn primary" id="goCreate">✦ 创建一个房间</button>
+    <button class="btn secondary" id="goJoin">♡ 加入朋友的房间</button>
+    <p class="small">答案在所有人提交后同步揭晓。意思相近，也可以由你们亲自判定相遇。</p>
   </section>
 
-  <section class="card hidden" id="create">
-    <h2>创建一场相遇</h2>
-    <p class="subtitle">给自己取一个好听的昵称吧。</p>
-    <input id="hostName" maxlength="12" placeholder="输入你的昵称">
-    <button class="btn primary" onclick="prepare('create')">创建房间 →</button>
-    <button class="back" onclick="show('home')">← 返回</button>
+  <section id="createPanel" class="card hidden">
+    <h2>创建一场相遇</h2><p class="sub">给自己取一个昵称，邀请朋友来玩吧。</p>
+    <input id="hostName" maxlength="12" placeholder="你的昵称（1–12个字符）">
+    <button class="btn primary" id="createBtn">创建房间 →</button>
+    <button class="btn ghost backHome">返回</button>
   </section>
 
-  <section class="card hidden" id="join">
-    <h2>加入朋友的房间</h2>
-    <p class="subtitle">输入朋友分享给你的房间邀请码。</p>
-    <input id="joinName" maxlength="12" placeholder="你的昵称">
-    <input id="roomCode" maxlength="6" placeholder="六位房间邀请码">
-    <button class="btn primary" onclick="prepare('join')">加入游戏 →</button>
-    <button class="back" onclick="show('home')">← 返回</button>
+  <section id="joinPanel" class="card hidden">
+    <h2>加入朋友的房间</h2><p class="sub">输入朋友分享给你的六位邀请码。</p>
+    <input id="joinName" maxlength="12" placeholder="你的昵称（1–12个字符）">
+    <input id="joinCode" maxlength="6" placeholder="六位房间邀请码" autocomplete="off">
+    <button class="btn primary" id="joinBtn">加入游戏 →</button>
+    <button class="btn ghost backHome">返回</button>
   </section>
 
-  <div id="message"></div>
-  <div class="decoration">✧ ───────── ♡ ───────── ✧</div>
+  <section id="lobby" class="card hidden">
+    <div class="row"><span class="pill">♡ 等待朋友加入</span><span class="small" id="lobbyCount">0 / 4 人</span></div>
+    <h2 class="center" style="margin-top:15px">房间已经准备好</h2>
+    <div class="center small">把邀请码或邀请链接分享给朋友</div>
+    <div class="roomcode center" id="roomCodeDisplay">------</div>
+    <button class="btn secondary" id="copyInvite">复制邀请链接</button>
+    <div class="players" id="lobbyPlayers"></div>
+    <p class="small center" id="lobbyHint">至少需要两位玩家，房主才能开始游戏。</p>
+    <button class="btn primary hidden" id="startBtn">大家准备好了，开始游戏！</button>
+    <button class="btn ghost" id="leaveBtn">离开房间</button>
+  </section>
+
+  <section id="game" class="card hidden">
+    <div class="row"><span class="pill" id="roundPill">第 1 轮</span><span class="small" id="gamePlayerCount"></span></div>
+    <div id="thinkArea">
+      <p class="sub center" style="margin:16px 0 4px">根据上一轮出现的词语，写下你的联想。</p>
+      <div id="previousWords" class="wordlist hidden"></div>
+      <div class="center">
+        <div class="timer" id="timer">30</div>
+        <div class="small">秒 · 提交后答案将锁定</div>
+      </div>
+      <div class="timerbar"><div class="timerfill" id="timerFill"></div></div>
+      <input id="wordInput" class="wordinput" maxlength="50" placeholder="此刻，你想到的词是……" autocomplete="off">
+      <button class="btn primary" id="submitBtn">提交我的词语</button>
+      <div class="notice center" id="submitStatus">提交后不能修改。所有人提交后会立即揭晓。</div>
+    </div>
+    <div id="waitingArea" class="hidden center">
+      <div style="font-size:42px;margin:12px">🌷</div>
+      <h2>你的答案已锁定</h2>
+      <p class="sub">正在等待其他朋友……</p>
+      <div class="players" id="progressPlayers"></div>
+    </div>
+    <div id="revealArea" class="hidden">
+      <h2 class="center">这一轮，大家想到了……</h2>
+      <div class="wordlist" id="revealedWords"></div>
+      <div class="notice center">词语相同，或者意思足够接近？由你们自己决定是否相遇。</div>
+      <div id="hostRoundActions" class="hidden">
+        <button class="btn primary" id="matchBtn">♡ 我们相遇了！</button>
+        <button class="btn secondary" id="nextBtn">继续联想 →</button>
+      </div>
+      <p class="small center" id="guestWait"></p>
+    </div>
+  </section>
+
+  <section id="victory" class="card hidden center">
+    <div class="win">💗</div>
+    <h2>我们相遇了！</h2>
+    <p class="sub">原来绕了这么多圈，最后我们想到了同一个答案。</p>
+    <div id="victorySummary" class="notice"></div>
+    <button class="btn secondary" id="backToHome">回到首页</button>
+  </section>
+
+  <div id="toast" class="toast" role="status"></div>
   <div class="footer">MADE FOR LITTLE MOMENTS & BIG CONNECTIONS</div>
-</main>
+</div>
 
 <script>
-function show(page){
-  ['home','create','join'].forEach(id=>{
-    document.getElementById(id).classList.toggle('hidden',id!==page);
-  });
-  document.getElementById('message').textContent='';
-}
-function prepare(type){
-  const name=document.getElementById(type==='create'?'hostName':'joinName').value.trim();
-  const code=document.getElementById('roomCode').value.trim();
-  if(!name){alert('先给自己取一个昵称吧！');return;}
-  if(type==='join' && !/^[A-Za-z0-9]{6}$/.test(code)){
-    alert('请输入六位房间邀请码！');return;
+(() => {
+  const SUPABASE_URL = 'https://ipkhqnrjweuxvtmoftht.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_0sZZ9fh-Ca-X3h6HupRCIg_2QDM9zci';
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
+  const panels = ['home','createPanel','joinPanel','lobby','game','victory'];
+  let session = null, poller = null, ticker = null, lastState = null, deadline = null;
+  let localDraftKey = null, autoAttempted = false, currentView = 'home';
+
+  function show(id) {
+    panels.forEach(p => $(p).classList.toggle('hidden', p !== id));
+    currentView = id;
+    $('toast').textContent = '';
   }
-  document.getElementById('message').textContent=
-    '首页已准备好！下一步连接实时游戏后台，就可以正式创建和加入房间啦 ♡';
-}
+  function toast(msg) { $('toast').textContent = msg || ''; }
+  function saveSession(s) {
+    session = s;
+    localStorage.setItem('sameword-session', JSON.stringify(s));
+    localDraftKey = `sameword-draft-${s.room_code}-${s.player_id}`;
+  }
+  function loadSession() {
+    try {
+      const s = JSON.parse(localStorage.getItem('sameword-session') || 'null');
+      if (s && s.room_code && s.player_token && s.player_id) {
+        session = s; localDraftKey = `sameword-draft-${s.room_code}-${s.player_id}`; return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+  function clearSession() {
+    if (poller) clearInterval(poller);
+    if (ticker) clearInterval(ticker);
+    poller = ticker = null; session = null; lastState = null;
+    localStorage.removeItem('sameword-session');
+  }
+  async function rpc(name, args) {
+    const {data,error} = await db.rpc(name,args);
+    if (error) throw error;
+    return data;
+  }
+  function err(e) { toast(e?.message || '操作失败，请稍后重试。'); }
+  function startPolling() {
+    if (poller) clearInterval(poller);
+    poller = setInterval(refresh, 1400);
+    refresh();
+  }
+  async function refresh() {
+    if (!session) return;
+    try {
+      const state = await rpc('get_game_state', {
+        p_room_code: session.room_code, p_player_token: session.player_token
+      });
+      lastState = state;
+      if (state.room_status === 'finished') { renderVictory(state); return; }
+      if (state.room_status === 'waiting') { renderLobby(state); return; }
+      // If everyone has submitted early, persist the reveal timestamp
+      // before allowing the host to advance to the next round.
+      if (state.is_revealed) {
+        try {
+          await rpc('reveal_game_round', {
+            p_room_code: session.room_code, p_player_token: session.player_token
+          });
+        } catch(e) {}
+      }
+      renderGame(state);
+      if (state.deadline) {
+        const ms = new Date(state.deadline).getTime();
+        if (Date.now() >= ms && !state.is_revealed && !autoAttempted) {
+          autoAttempted = true;
+          const draft = (localStorage.getItem(localDraftKey) || '').trim();
+          if (draft) {
+            try {
+              await rpc('submit_word', {
+                p_room_code: session.room_code, p_player_token: session.player_token,
+                p_word: draft, p_auto: true
+              });
+            } catch(e) { /* already submitted or no longer accepting */ }
+          }
+          // Brief grace period lets other connected players auto-submit
+          // their locally saved drafts before the round is revealed.
+          setTimeout(async () => {
+            try {
+              await rpc('reveal_game_round', {
+                p_room_code: session.room_code, p_player_token: session.player_token
+              });
+            } catch(e) {}
+            await refresh();
+          }, 2200);
+        }
+      }
+    } catch(e) { err(e); }
+  }
+  function renderLobby(state) {
+    show('lobby');
+    $('roomCodeDisplay').textContent = state.room_code;
+    $('lobbyCount').textContent = `${state.players.length} / 4 人`;
+    $('lobbyPlayers').innerHTML = state.players.map((p,i) =>
+      `<div class="player"><div class="avatar">${escapeHtml(p.nickname.slice(0,1))}</div><div class="player-name">${escapeHtml(p.nickname)}</div><div class="player-status">${p.is_host?'房主':'已加入'}</div></div>`
+    ).join('');
+    $('startBtn').classList.toggle('hidden', !session.is_host);
+    $('startBtn').disabled = state.players.length < 2;
+    $('lobbyHint').textContent = session.is_host
+      ? (state.players.length < 2 ? '至少需要两位玩家，房主才能开始游戏。' : '人齐了吗？点击下方按钮开始。')
+      : '等待房主开始游戏……';
+  }
+  function renderGame(state) {
+    show('game');
+    $('roundPill').textContent = `第 ${state.current_round} 轮`;
+    $('gamePlayerCount').textContent = `${state.players.length} 位玩家`;
+    const previous = state.current_round > 1 ? state.words : [];
+    if (previous.length) {
+      $('previousWords').classList.remove('hidden');
+      $('previousWords').innerHTML = `<div class="small center">上一轮的词语</div>` + previous.map(w =>
+        `<div class="worditem"><strong>${escapeHtml(w.nickname)}</strong><span>${escapeHtml(w.word)}</span></div>`
+      ).join('');
+    } else {
+      $('previousWords').classList.add('hidden');
+    }
+    if (state.is_revealed) {
+      $('thinkArea').classList.add('hidden'); $('waitingArea').classList.add('hidden');
+      $('revealArea').classList.remove('hidden');
+      $('revealedWords').innerHTML = (state.words || []).map(w =>
+        `<div class="worditem"><strong>${escapeHtml(w.nickname)}${w.is_auto_submitted?' · 自动提取':''}</strong><span>${escapeHtml(w.word)}</span></div>`
+      ).join('');
+      $('hostRoundActions').classList.toggle('hidden', !session.is_host);
+      $('guestWait').textContent = session.is_host ? '' : '等待房主确认相遇，或开启下一轮……';
+    } else {
+      $('revealArea').classList.add('hidden');
+      const me = state.players.find(p => p.id === session.player_id);
+      const submitted = !!me?.has_submitted;
+      $('thinkArea').classList.toggle('hidden', submitted);
+      $('waitingArea').classList.toggle('hidden', !submitted);
+      $('progressPlayers').innerHTML = state.players.map(p =>
+        `<div class="player"><div class="avatar">${escapeHtml(p.nickname.slice(0,1))}</div><div class="player-name">${escapeHtml(p.nickname)}</div><div class="player-status">${p.has_submitted?'已提交':'思考中…'}</div></div>`
+      ).join('');
+      if (!submitted) {
+        deadline = new Date(state.deadline).getTime();
+        if (!ticker) ticker = setInterval(updateTimer, 200);
+        updateTimer();
+      } else if (ticker) { clearInterval(ticker); ticker = null; }
+    }
+  }
+  function updateTimer() {
+    if (!deadline || currentView !== 'game') return;
+    const remain = Math.max(0, Math.ceil((deadline-Date.now())/1000));
+    $('timer').textContent = String(remain).padStart(2,'0');
+    $('timerFill').style.width = `${Math.max(0,remain/30*100)}%`;
+  }
+  function renderVictory(state) {
+    if (poller) { clearInterval(poller); poller = null; }
+    if (ticker) { clearInterval(ticker); ticker = null; }
+    show('victory');
+    $('victorySummary').textContent = `房间 ${state.room_code} · 共进行了 ${state.current_round} 轮。`;
+  }
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  async function enter(s) { saveSession(s); autoAttempted=false; show('lobby'); startPolling(); }
+  $('goCreate').onclick = () => show('createPanel');
+  $('goJoin').onclick = () => {
+    const code = new URLSearchParams(location.search).get('room');
+    if (code) $('joinCode').value = code.toUpperCase();
+    show('joinPanel');
+  };
+  document.querySelectorAll('.backHome').forEach(b => b.onclick = () => show('home'));
+  $('createBtn').onclick = async () => {
+    const nickname = $('hostName').value.trim();
+    if (!nickname) return toast('请先输入昵称。');
+    $('createBtn').disabled = true;
+    try {
+      const data = await rpc('create_game_room',{p_nickname:nickname});
+      await enter(data);
+    } catch(e) { err(e); }
+    finally { $('createBtn').disabled = false; }
+  };
+  $('joinBtn').onclick = async () => {
+    const nickname = $('joinName').value.trim(), code = $('joinCode').value.trim().toUpperCase();
+    if (!nickname || !code) return toast('请填写昵称和邀请码。');
+    $('joinBtn').disabled = true;
+    try {
+      const data = await rpc('join_game_room',{p_room_code:code,p_nickname:nickname});
+      await enter(data);
+    } catch(e) { err(e); }
+    finally { $('joinBtn').disabled = false; }
+  };
+  $('copyInvite').onclick = async () => {
+    const url = `${location.origin}${location.pathname}?room=${session.room_code}`;
+    try { await navigator.clipboard.writeText(url); toast('邀请链接已复制，发给朋友吧！'); }
+    catch(e) { toast(`邀请码：${session.room_code}（可手动复制链接）`); }
+  };
+  $('startBtn').onclick = async () => {
+    try { await rpc('start_game',{p_room_code:session.room_code,p_player_token:session.player_token}); autoAttempted=false; await refresh(); }
+    catch(e) { err(e); }
+  };
+  $('wordInput').addEventListener('input', () => {
+    if (localDraftKey) localStorage.setItem(localDraftKey,$('wordInput').value);
+  });
+  $('submitBtn').onclick = async () => {
+    const word = $('wordInput').value.trim();
+    if (!word) return toast('先写下一个词语吧。');
+    $('submitBtn').disabled = true;
+    try {
+      await rpc('submit_word',{p_room_code:session.room_code,p_player_token:session.player_token,p_word:word,p_auto:false});
+      localStorage.removeItem(localDraftKey);
+      if (ticker) { clearInterval(ticker); ticker=null; }
+      await refresh();
+    } catch(e) { err(e); $('submitBtn').disabled=false; }
+  };
+  $('matchBtn').onclick = async () => {
+    try { await rpc('confirm_game_match',{p_room_code:session.room_code,p_player_token:session.player_token}); await refresh(); }
+    catch(e) { err(e); }
+  };
+  $('nextBtn').onclick = async () => {
+    try {
+      await rpc('next_game_round',{p_room_code:session.room_code,p_player_token:session.player_token});
+      localStorage.removeItem(localDraftKey); autoAttempted=false; $('wordInput').value=''; await refresh();
+    } catch(e) { err(e); }
+  };
+  $('leaveBtn').onclick = () => {
+    if (!confirm('确定离开这个房间吗？')) return;
+    clearSession(); show('home');
+  };
+  $('backToHome').onclick = () => { clearSession(); show('home'); };
+  // Restore a previous session on refresh.
+  if (loadSession()) startPolling();
+  else {
+    const code = new URLSearchParams(location.search).get('room');
+    if (code) { $('joinCode').value=code.toUpperCase(); show('joinPanel'); }
+  }
+})();
 </script>
 </body>
 </html>
