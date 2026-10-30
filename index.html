@@ -257,7 +257,7 @@ a{color:var(--deep)}
     show('game');
     $('roundPill').textContent = `第 ${state.current_round} 轮`;
     $('gamePlayerCount').textContent = `${state.players.length} 位玩家`;
-    const previous = state.current_round > 1 ? state.words : [];
+ const previous = state.current_round > 1 ? (state.previous_words || []) : [];
     if (previous.length) {
       $('previousWords').classList.remove('hidden');
       $('previousWords').innerHTML = `<div class="small center">上一轮的词语</div>` + previous.map(w =>
