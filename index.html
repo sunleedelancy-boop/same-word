@@ -79,6 +79,14 @@ a{color:var(--deep)}
   <section id="createPanel" class="card hidden">
     <h2>创建一场相遇</h2><p class="sub">给自己取一个昵称，邀请朋友来玩吧。</p>
     <input id="hostName" maxlength="12" placeholder="你的昵称（1–12个字符）">
+    <div class="center" style="margin:12px 0;">
+  <label for="roundSeconds">每轮思考时间：</label>
+  <select id="roundSeconds">
+    <option value="30">30秒</option>
+    <option value="60" selected>60秒</option>
+    <option value="90">90秒</option>
+  </select>
+</div>
     <button class="btn primary" id="createBtn">创建房间 →</button>
     <button class="btn ghost backHome">返回</button>
   </section>
