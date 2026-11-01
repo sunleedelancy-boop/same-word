@@ -328,7 +328,7 @@ a{color:var(--deep)}
     try {
 const data = await rpc('create_game_room',{
   p_nickname: nickname,
-  p_round_duration_seconds: Number($('roundDuration').value)
+p_round_duration_seconds: Number($('roundSeconds').value)
 });
       await enter(data);
     } catch(e) { err(e); }
