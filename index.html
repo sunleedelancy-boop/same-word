@@ -326,7 +326,10 @@ a{color:var(--deep)}
     if (!nickname) return toast('请先输入昵称。');
     $('createBtn').disabled = true;
     try {
-      const data = await rpc('create_game_room',{p_nickname:nickname});
+const data = await rpc('create_game_room',{
+  p_nickname: nickname,
+  p_round_duration_seconds: Number($('roundDuration').value)
+});
       await enter(data);
     } catch(e) { err(e); }
     finally { $('createBtn').disabled = false; }
