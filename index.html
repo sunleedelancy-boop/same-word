@@ -124,6 +124,7 @@ a{color:var(--deep)}
       <input id="wordInput" class="wordinput" maxlength="50" placeholder="此刻，你想到的词是……" autocomplete="off">
       <button class="btn primary" id="submitBtn">提交我的词语</button>
       <div class="notice center" id="submitStatus">提交后不能修改。所有人提交后会立即揭晓。</div>
+      <div id="historyList" class="wordlist"></div>
     </div>
     <div id="waitingArea" class="hidden center">
       <div style="font-size:42px;margin:12px">🌷</div>
@@ -265,7 +266,11 @@ a{color:var(--deep)}
     show('game');
     $('roundPill').textContent = `第 ${state.current_round} 轮`;
     $('gamePlayerCount').textContent = `${state.players.length} 位玩家`;
- const previous = state.current_round > 1 ? (state.previous_words || []) : [];
+          const history = (state.history || []);
+      $('historyList').innerHTML = history.map(h =>
+        `<div class="worditem"><strong>第 ${h.round_number} 轮</strong><span>${(h.words || []).map(w => escapeHtml(w.word)).join(' × ')}</span></div>`
+      ).join('');
+const previous = state.current_round > 1 ? ((state.history || []).find(h => Number(h.round_number) === Number(state.current_round) - 1)?.words || []) : [];
     if (previous.length) {
       $('previousWords').classList.remove('hidden');
       $('previousWords').innerHTML = `<div class="small center">上一轮的词语</div>` + previous.map(w =>
