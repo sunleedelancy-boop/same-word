@@ -286,6 +286,7 @@ a{color:var(--deep)}
       $('revealArea').classList.add('hidden');
       const me = state.players.find(p => p.id === session.player_id);
       const submitted = !!me?.has_submitted;
+      $('submitBtn').disabled = submitted;
       $('thinkArea').classList.toggle('hidden', submitted);
       $('waitingArea').classList.toggle('hidden', !submitted);
       $('progressPlayers').innerHTML = state.players.map(p =>
